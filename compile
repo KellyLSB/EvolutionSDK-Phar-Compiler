@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+
+# Get Branch of Evo to Compile
+if [ -z "$1" ]
+then
+	branch="master"
+else
+	branch="$1"
+fi
+
+echo -e "\n=========================="
+echo -e "EvolutionSDK Phar Compiler"
+echo -e "        By KellyLSB       "
+echo -e "=========================="
+echo -e "\nPreparing to Compile EvolutionSDK $branch branch into a PHP Phar file.\n"
+
+# Checkout the repo and prepare for compile
+rm -Rf src
+git clone -b $branch git@github.com:EvolutionSDK/EvolutionSDK src
+rm -Rf src/.git*
+
+# Create the build dir
+rm -Rf build
+mkdir build
+
+# CLI Interface
+echo "<?php echo 'EvolustionSDK currently cannot run from the command line';" > src/cli.php
+
+# Web Interface
+echo "<?php
+
+/**
+ * Error Handler
+ */
+const MinimalError = <<<_
+<html>
+	<head>
+		<title>Evolution Setup</title>
+		<style>
+			body {font-family: sans-serif;}
+			p {color: darkred;}
+		</style>
+	</head>
+	<body>
+		<h1>Evolution Setup</h1>
+		<p>%message</p>
+	</body>
+_;
+
+/**
+ * EvolutionSite Location
+ */
+define('EvolutionSite', dirname(dirname(Phar::running(false))));
+
+/**
+ * Environment File
+ */
+\$environment = dirname(Phar::running(false)) . '/' . 'environment.php';
+if(!file_exists(\$environment))
+	die(str_replace('%message', 'Please create <code>' . \$environment . '</code>', MinimalError));
+require(\$environment);
+
+/**
+ * EvolutionSDK Location
+ */
+define('EvolutionSDK', __DIR__);
+
+/**
+ * Include the startup file
+ */
+require_once __DIR__.'/kernel/startup.php';
+
+/**
+ * Use the evolution router
+ */
+e::\$router->route(\$_SERVER['REDIRECT_URL']);
+
+__HALT_COMPILER();" > src/web.php
+
+# Start Compiling the Phar
+echo "<?php ini_set('phar.readonly', 0);
+
+\$root = realpath(__DIR__);
+\$srcRoot = \$root.\"/src\";
+\$buildRoot = \$root.\"/build\";
+
+\$phar = new Phar(\$buildRoot . '/evolutionsdk.phar', 0, 'evolutionsdk.phar');
+\$phar->compressFiles(Phar::GZ);
+\$phar->setSignatureAlgorithm (Phar::SHA1);
+
+\$phar->buildFromDirectory(\$srcRoot);
+\$phar->setDefaultStub('cli.php', 'web.php');
+\$phar = null;" | /usr/bin/env php
+
+# Done
+echo -e "\nDone...\n"
