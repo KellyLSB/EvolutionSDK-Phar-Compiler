@@ -1,11 +1,21 @@
 EvolutionSDK Phar Compiler
 ==========================
-This compiler is one of the easiest ways to get your EvolutionSDK file started. Right now it only compiles the framework. In the future I plan on allowing it to set up a new website for you and or just keep your framework updated.
+This compiler is one of the easiest ways to get your EvolutionSDK (E3) site started. Not only do we compile the framework for you but we also have the ability to kick start your E3 site, but we also this will also keep your framework updated.
 
-Usage
-=====
-Currently the only available argument is which branch of EvolutionSDK to compile. Right now the "dev" branch is the only branch with support for Phar files but this will change within the next couple days.
+Basic Usage
+===========
+To compile the framework go ahead and run `./compile`. This will automatically clone the repository and start the phar compilation process. The compiled Phar will now be accessible in the ./build directory.
 
-  ./compile [branch]
-  
-More on this later.
+Kickstart My Website
+====================
+To kick start your website with E3 run `./compile /path/to/site/dir`. This will clone and compile the phar just as if you had run `./compile`. It will also create the basic site structure to kick start your E3 site in the directory passed as the second argument. It will automatically copy the framework to the proper location and set up all the files. In fact all you need to do is set up apache to point to `/path/to/site/dir`.
+
+EvolutionSDK comes with a built in management center to handle basic items, such as showing phpinfo() to setting environment variables. When you kickstart your E3 site with this script it will automatically ask you to set up your first development account.
+
+Updating My E3 Framework
+========================
+This will only update the framework if you installed your framework using this compiler (or have your files in the exact same structure). All you need to run is `./compile /path/to/site/dir` it will replace the framework phar automatically.
+
+Compiling a different branch of E3
+==================================
+You can compile an alternate branch of E3 by passing the branch name as the third argument (ie. `./compile /path/to/site/dir <branch>`). If all you want to do is compile the framework you can run `./compile false <branch>`

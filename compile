@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 # Get Branch of Evo to Compile
-if [ -z "$1" ]
+if [ -z "$2" ]
 then
 	branch="master"
 else
-	branch="$1"
+	branch="$2"
 fi
 
 echo -e "\n=========================="
@@ -92,5 +92,100 @@ echo "<?php ini_set('phar.readonly', 0);
 \$phar->setDefaultStub('cli.php', 'web.php');
 \$phar = null;" | /usr/bin/env php
 
-# Done
-echo -e "\nDone...\n"
+# Done Compiling the Phar File
+echo -e "\nDone Compiling...\n"
+
+if [ ! -z "$1" ] && [ ! "$1" == "false" ]
+then
+
+	# See if the directory exists and if not can we create it
+	if [ ! -w `dirname "$1"` ] && [ ! -d $1 ]
+	then
+		echo -e "Directory: $1 could not be created.\n"
+		exit
+	fi
+
+	# Let the user know if were creating a new site
+	if [ ! -d $1 ]
+	then
+		echo -e "Creating a new EvolutionSDK site in $1...\n"
+	else
+		echo -e "Updating an existing EvolutionSDK site in $1...\n"
+	fi
+	
+	# Create all the necessary directories
+	mkdir -p "$1"
+	mkdir -p "$1/runtime"
+	mkdir -p "$1/configure"
+	mkdir -p "$1/bundles"
+	mkdir -p -m 0777 "$1/runtime/cache"
+
+	# Check if we can write to the new site dir
+	if [ ! -w $1 ]
+	then
+		echo -e "Directory: $1 could not be written to.\n"
+		exit
+	fi
+
+	# Move the Phar file compiled above to the runtime directory
+	echo -e "Placing framework at $1/runtime/evolutionsdk.phar"
+	cp "build/evolutionsdk.phar" "$1/runtime/evolutionsdk.phar"
+
+	# Create the .htaccess file
+	if [ ! -f "$1/.htaccess" ]
+	then
+		echo -e "Creating $1/.htaccess"
+		echo "# PHP flags
+php_flag    display_errors          1
+php_flag    display_startup_errors  1
+php_flag    log_errors              1
+php_flag    register_globals        0
+php_flag    short_open_tag          1
+
+# PHP values
+php_value   error_reporting     6135
+php_value	memory_limit        100M
+SetEnv TZ   UTC
+
+# URL rewriting directives
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    RewriteRule ^(static|favicon.ico|robots.txt|humans.txt)($|/) - [L]
+    RewriteRule ^runtime\/startup\.php$ - [L]
+    RewriteRule .* /runtime/startup.php [L]
+</IfModule>" > "$1/.htaccess"
+	fi
+
+	# Create the startup.php
+	if [ ! -f "$1/runtime/startup.php" ]
+	then
+		echo -e "Creating $1/runtime/startup.php"
+		echo "<?php require_once \"phar://\" . __DIR__ . \"/evolutionsdk.phar/web.php\";" > "$1/runtime/startup.php"
+	fi
+
+	# Create the environment.php
+	if [ ! -f "$1/runtime/environment.php" ]
+	then
+		echo -e "Creating $1/runtime/environment.php"
+		echo "<?php define(\"CacheDir\", __DIR__ . '/cache');" > "$1/runtime/environment.php"
+	fi
+
+	echo -e "\nEvolutionSDK Site has been successfully set up in $1\n"
+
+	# Set up developer access keys if the file does not exist
+	if [ ! -f "$1/configure/developers.yaml" ]
+	then
+		echo -e "Setting up developer access keys..."
+		echo -e "\nPlease enter your desired username then press Enter."
+		read name
+		echo -e "\nPlease enter your desired password then press Enter."
+		read pass
+		echo "<?php \$key = array('$name', '$pass'); echo '---'.\"\n\".'$name'.': '.'$name'.'_'.md5(base64_encode(md5(\$key . '!@#$%^*()' . '$pass')));" | /usr/bin/env php > "$1/configure/developers.yaml"
+		echo -e "\nDone... when you are prompted to enter your developer credentials please enter '$name.$pass'\n"
+		echo -e "Welcome to E3!\n"
+	fi
+
+fi
+
+exit
