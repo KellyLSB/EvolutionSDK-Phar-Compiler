@@ -1,18 +1,20 @@
 #!/usr/bin/env bash
 
 # Get Branch of Evo to Compile
-if [ -z "$1" ]
+if [ -z "$1" ] || [ -z "$2" ]
 then
-	echo -e "Expecting bundle name as first arg."
+	echo -e "Usage: bundle-compiler <git-repository> <bundle-name>"
 	exit
 fi
 
-echo -e "\n=============================="
+echo -e "\n================================="
 echo -e "EvolutionSDK Phar Bundle Compiler"
 echo -e "            By KellyLSB          "
 echo -e "=================================\n"
 
 # Checkout the repo and prepare for compile
+rm -Rf src
+git clone $1 src
 rm -Rf src/.git*
 
 # Create the build dir
@@ -34,7 +36,7 @@ echo "<?php ini_set('phar.readonly', 0);
 \$srcRoot = \$root.\"/src\";
 \$buildRoot = \$root.\"/build\";
 
-\$phar = new Phar(\$buildRoot . '/$1.phar', 0, '$1.phar');
+\$phar = new Phar(\$buildRoot . '/$2.phar', 0, '$2.phar');
 \$phar->compressFiles(Phar::GZ);
 \$phar->setSignatureAlgorithm (Phar::SHA1);
 
@@ -43,4 +45,5 @@ echo "<?php ini_set('phar.readonly', 0);
 \$phar = null;" | /usr/bin/env php
 
 # Done Compiling the Phar File
+echo "" > "build/built-$(date +%Y-%m-%d_%H%M)"
 echo -e "\nDone Compiling...\n"
