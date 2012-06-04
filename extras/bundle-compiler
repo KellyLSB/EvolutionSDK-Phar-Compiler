@@ -4,6 +4,7 @@
 if [ -z "$1" ]
 then
 	echo -e "Expecting bundle name as first arg."
+	exit
 fi
 
 echo -e "\n=============================="
