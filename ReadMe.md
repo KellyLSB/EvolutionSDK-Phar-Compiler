@@ -2,6 +2,14 @@ EvolutionSDK Phar Compiler
 ==========================
 This compiler is one of the easiest ways to get your EvolutionSDK (E3) site started. Not only do we compile the framework for you but we also have the ability to kick start your E3 site, but we also this will also keep your framework updated.
 
+Dependencies
+============
+Ability to compile Phar files. The php.ini value `phar.readonly` must be set to '0'! This must be set in the php.ini file. You cannot set this with ini_set();
+
+Ability to run PHP files from the Command Line.
+
+Mac/*NIX System or server to run the script on.
+
 Basic Usage
 ===========
 To compile the framework go ahead and run `./compile`. This will automatically clone the repository and start the phar compilation process. The compiled Phar will now be accessible in the ./build directory.
