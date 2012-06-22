@@ -16,8 +16,7 @@ echo -e "\nPreparing to Compile EvolutionSDK $branch branch into a PHP Phar file
 
 # Checkout the repo and prepare for compile
 rm -Rf src
-# git clone -b $branch git://github.com/EvolutionSDK/EvolutionSDK.git src
-cp -rf /Volumes/Kalli/Sites/Evolution/SDK ./src
+git clone -b $branch git://github.com/EvolutionSDK/EvolutionSDK.git src
 rm -Rf src/.git*
 
 # Create the build dir
