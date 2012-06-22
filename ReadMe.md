@@ -1,6 +1,6 @@
 EvolutionSDK Phar Compiler
 ==========================
-This compiler is one of the easiest ways to get your EvolutionSDK (E3) site started. Not only do we compile the framework for you but we also have the ability to kick start your E3 site, but we also this will also keep your framework updated.
+This compiler is one of the easiest ways to get your [EvolutionSDK](http://github.com/EvolutionSDK/EvolutionSDK) (E3) site started. Not only do we compile the framework for you but we also have the ability to kick start your E3 site, but we also this will also keep your framework updated.
 
 Dependencies
 ============
@@ -27,3 +27,7 @@ This will only update the framework if you installed your framework using this c
 Compiling a different branch of E3
 ==================================
 You can compile an alternate branch of E3 by passing the branch name as the third argument (ie. `./compile /path/to/site/dir <branch>`). If all you want to do is compile the framework you can run `./compile false <branch>`
+
+More by KellyLSB
+================
+Visit [KellyBecker.me](http://kellybecker.me)
