@@ -16,7 +16,8 @@ echo -e "\nPreparing to Compile EvolutionSDK $branch branch into a PHP Phar file
 
 # Checkout the repo and prepare for compile
 rm -Rf src
-git clone -b $branch git://github.com/EvolutionSDK/EvolutionSDK.git src
+# git clone -b $branch git://github.com/EvolutionSDK/EvolutionSDK.git src
+cp -rf /Volumes/Kalli/Sites/Evolution/SDK ./src
 rm -Rf src/.git*
 
 # Create the build dir
@@ -73,7 +74,7 @@ require_once __DIR__.'/kernel/startup.php';
 /**
  * Use the evolution router
  */
-e::\$router->route(\$_SERVER['REDIRECT_URL']);
+e::\$router->__routeBundle(\$_SERVER['REDIRECT_URL']);
 
 __HALT_COMPILER();" > src/web.php
 
