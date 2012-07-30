@@ -17,16 +17,14 @@ echo -e "\nPreparing to Compile EvolutionSDK $branch branch into a PHP Phar file
 # Checkout the repo and prepare for compile
 rm -Rf src
 git clone -b $branch git://github.com/EvolutionSDK/EvolutionSDK.git src
+#cp -rf /Volumes/Krishna/kellylsb/Development/sites/Evolution/SDK ./src
 rm -Rf src/.git*
 
 # Create the build dir
 rm -Rf build
 mkdir build
 
-# CLI Interface
-echo "<?php echo 'EvolustionSDK currently cannot run from the command line';" > src/cli.php
-
-# Web Interface
+# Startup Interface
 echo "<?php
 
 /**
@@ -89,7 +87,7 @@ echo "<?php ini_set('phar.readonly', 0);
 \$phar->setSignatureAlgorithm (Phar::SHA1);
 
 \$phar->buildFromDirectory(\$srcRoot);
-\$phar->setDefaultStub('cli.php', 'web.php');
+\$phar->setDefaultStub('web.php');
 \$phar = null;" | /usr/bin/env php
 
 # Done Compiling the Phar File
@@ -161,7 +159,7 @@ SetEnv TZ   UTC
 	if [ ! -f "$1/runtime/startup.php" ]
 	then
 		echo -e "Creating $1/runtime/startup.php"
-		echo "<?php require_once \"phar://\" . __DIR__ . \"/evolutionsdk.phar/web.php\";" > "$1/runtime/startup.php"
+		echo "<?php require \"evolutionsdk.phar\";" > "$1/runtime/startup.php"
 	fi
 
 	# Create the environment.php
