@@ -17,7 +17,7 @@ echo -e "\nPreparing to Compile EvolutionSDK $branch branch into a PHP Phar file
 # Checkout the repo and prepare for compile
 rm -Rf src
 git clone -b $branch git://github.com/EvolutionSDK/EvolutionSDK.git src
-#cp -rf /Volumes/Krishna/kellylsb/Development/sites/Evolution/SDK ./src
+#cp -rf /Volumes/Krishna/kbecker/Development/php/Evolution/SDK ./src
 rm -Rf src/.git*
 
 # Create the build dir
@@ -179,7 +179,7 @@ SetEnv TZ   UTC
 		read name
 		echo -e "\nPlease enter your desired password then press Enter."
 		read pass
-		echo "<?php \$key = array('$name', '$pass'); echo '---'.\"\n\".'$name'.': '.'$name'.'_'.md5(base64_encode(md5(\$key . '!@#$%^*()' . '$pass')));" | /usr/bin/env php > "$1/configure/developers.yaml"
+		echo "<?php \$key = array('$name', '$pass'); echo '---'.\"\n\".'$name'.': '.'$name'.'_'.md5(base64_encode(md5(serialize(\$key) . '!@#$%^*()' . '$pass')));" | /usr/bin/env php > "$1/configure/developers.yaml"
 		echo -e "\nDone... when you are prompted to enter your developer credentials please enter '$name.$pass'\n"
 		echo -e "Welcome to E3!\n"
 	fi
